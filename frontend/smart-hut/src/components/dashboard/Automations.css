@@ -1,0 +1,18 @@
+.segment-automations {
+  top: 10%;
+}
+
+.list-index {
+  font-size: 1.5rem;
+}
+
+.remove-icon {
+  display: inline !important;
+  margin-left: 1rem !important;
+}
+
+.trigger-item {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+}

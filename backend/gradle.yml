@@ -1,0 +1,39 @@
+# vim: set ts=2 sw=2 et tw=80:
+image: gradle:jdk13
+
+stages:
+  - build
+  - test
+  - deploy
+
+smarthut_build:
+  stage: build
+  script:
+    - gradle assemble
+  artifacts:
+    paths:
+      - build/libs/*.jar
+    expire_in: 1 week
+
+smarthut_test:
+  stage: test
+  script:
+    - gradle check
+
+smarthut_deploy:
+  stage: deploy
+  image: docker:latest
+  services:
+    - docker:dind
+  variables:
+    DOCKER_DRIVER: overlay
+  before_script:
+    - docker version
+    - docker info
+    - docker login -u smarthutsm -p $CI_DOCKER_PASS
+  script:
+    - "docker build -t smarthutsm/smarthut:${CI_COMMIT_BRANCH} --pull ."
+    - "docker push smarthutsm/smarthut:${CI_COMMIT_BRANCH}"
+  after_script:
+    - docker logout
+

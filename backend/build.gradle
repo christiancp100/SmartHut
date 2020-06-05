@@ -1,0 +1,64 @@
+plugins {
+	id 'org.springframework.boot' version '2.2.4.RELEASE'
+	id 'io.spring.dependency-management' version '1.0.9.RELEASE'
+	id 'java'
+	id 'jacoco'
+	id "org.sonarqube" version "2.8"
+	id 'io.freefair.lombok' version '5.0.1'
+}
+group = 'ch.usi.inf.sa4.sanmarinoes'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+repositories {
+	mavenCentral()
+
+}
+dependencies {
+	compile 'org.hibernate.javax.persistence:hibernate-jpa-2.1-api:1.0.0.Final'
+	compile "org.springframework.boot:spring-boot-starter-websocket"
+	implementation 'org.springframework.boot:spring-boot-starter'
+	implementation 'com.sun.mail:javax.mail:1.6.2'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.springframework.boot:spring-boot-starter-mail'
+	implementation 'org.springframework.boot:spring-boot-starter-websocket'
+	implementation 'org.springframework:spring-websocket:5.2.4.RELEASE'
+	implementation 'io.jsonwebtoken:jjwt:0.9.1'
+	implementation 'org.springframework.security:spring-security-web'
+	implementation 'org.postgresql:postgresql'
+	implementation 'com.google.code.gson:gson'
+	compile 'io.springfox:springfox-swagger2:2.9.2'
+	compile 'io.springfox:springfox-swagger-ui:2.9.2'
+	compile 'org.springframework.boot:spring-boot-configuration-processor'
+	testCompile 'org.springframework.boot:spring-boot-starter-webflux'
+	implementation('org.springframework.boot:spring-boot-starter-web') {
+		exclude group: 'org.springframework.boot', module: 'spring-boot-starter-json'
+	}
+	testImplementation('org.springframework.boot:spring-boot-starter-test') {
+		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+	}
+	testImplementation 'org.springframework.security:spring-security-test'
+	testImplementation 'com.h2database:h2:1.4.200'
+	// Fixes https://stackoverflow.com/a/60455550
+	testImplementation group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.11'
+}
+
+gradle.projectsEvaluated {
+	tasks.withType(JavaCompile) {
+		options.compilerArgs << "-Xlint:deprecation"
+	}
+}
+
+test {
+	useJUnitPlatform()
+}
+
+jacocoTestReport {
+    reports {
+        xml.enabled true
+    }
+}
+
+plugins.withType(JacocoPlugin) {
+  tasks["test"].finalizedBy 'jacocoTestReport'
+}

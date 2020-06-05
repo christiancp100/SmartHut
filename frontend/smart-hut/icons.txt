@@ -1,0 +1,65 @@
+1. Home
+'home'
+
+2. Bar
+'coffee', 'beer', 'glass martini'
+
+3. Filmroom
+'film', 'video'
+
+4. Musicroom
+'music', 'headphones'
+
+5. Office
+'fax', 'phone', 'laptop'
+
+6. Bathroom
+'bath', 'shower'
+
+7. Bedroom
+'bed', 'child'
+
+8. Garage
+'warehouse', 'car', 'bicycle', 'motorcycle'
+
+9. Cellar
+'archive', 'boxes', 'cubes'
+
+10. Game Room
+'chess', 'gamepad', 'futbol', 'table tennis'
+
+11. IT Rack
+'server'
+
+12. Livingroom
+'tv'
+
+13. Love Room
+'heart'
+
+14. Hobby Room
+'camera', 'trophy', 'wrench'
+
+15. Gallery
+'image'
+
+16. Library
+'book', 'university'
+
+17. Infirmary
+'medkit'
+
+18. Petroom
+'paw'
+
+19. Garden
+'tree'
+
+20. Kitchen
+'utensils'
+
+21. Toilette
+'female', 'male'
+
+22. Swimmingpool
+'life ring outline'

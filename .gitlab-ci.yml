@@ -1,0 +1,57 @@
+image: node:latest
+
+stages:
+  - build
+  - test
+  - code_quality
+  - deploy
+
+cache:
+  paths:
+    - smart-hut/node_modules/
+
+install_dependencies:
+  stage: build
+  script:
+    - cd smart-hut
+    - yarn install
+  artifacts:
+    paths:
+      - smart-hut/node_modules/
+
+testing_testing:
+  stage: test
+  script:
+    - cd smart-hut
+    - yarn test
+
+sonar-scanner:
+  stage: code_quality
+  only:
+    - dev
+  script:
+    - cd smart-hut
+    - yarn eslint:report || true
+    - yarn sonar-scanner -Dsonar.host.url=$SONAR_URL -Dsonar.login=$SONAR_LOGIN -Dsonar.projectName=$CI_PROJECT_PATH_SLUG -Dsonar.projectKey=$CI_PROJECT_PATH_SLUG -Dsonar.exclusion=cypress -Dsonar.sources=src -Dsonar.javascript.file.suffixes=.js,.jsx -Dsonar.sourceEncoding=UTF-8 -Dsonar.scm.disabled=True -Dsonar.eslint.reportPaths=eslint-report.json
+
+smartHut_deploy:
+  stage: deploy
+  tags:
+    - dind
+  image: docker:latest
+  services:
+    - docker:dind
+  variables:
+    DOCKER_DRIVER: overlay
+  before_script:
+    - docker version
+    - docker info
+    - docker login -u smarthutsm -p $CI_DOCKER_PASS #GiovanniRoberto
+  script:
+    - "docker build -t smarthutsm/smarthut:${CI_COMMIT_BRANCH} ."
+    - "docker push smarthutsm/smarthut:${CI_COMMIT_BRANCH}"
+  after_script:
+    - docker logout
+  only:
+    - dev
+    - master

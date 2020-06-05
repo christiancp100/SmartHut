@@ -1,0 +1,36 @@
+import React, {Component} from "react";
+
+import { RemoteService } from "../../../remote";
+import { connect } from "react-redux";
+
+
+
+
+class SecurityCamera extends Component{
+    constructor (props){
+        super(props);
+        this.state = { path: this.props.device.path, on:this.props.device.on, timeout: null };
+
+       // this.setIntensity = this.setIntensity.bind(this);
+    }
+
+
+
+    render(){
+        return <div><p>"mode is: "{this.props.device.mode}</p>
+            <p>"internalsensortemperature is: "{this.props.device.internalSensorTemperature}</p>
+            <p>"targetTemperature is: "{this.props.device.targetTemperature}</p>
+            <p>"measuredtemperature is: "{this.props.device.measuredTemperature}</p>
+            <p>{this.props.device.on}</p>
+            <input type="submit" value="change targetTemperature" onClick={this.helperMode}/>
+            <input type="submit" value="robe" onClick={this.onClickDevice}/></div>;
+    }
+}
+
+
+const mapStateToProps = (state, ownProps) => ({
+    device: state.devices[ownProps.id],
+});
+
+const SecurityCameraContainer = connect(mapStateToProps, RemoteService)(SecurityCamera);
+export default SecurityCameraContainer;

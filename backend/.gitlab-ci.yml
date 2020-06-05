@@ -1,0 +1,61 @@
+#Trying to set up the CI, probably won't work
+image: gradle:jdk13
+
+stages:
+  - build
+  - test
+  - code_quality
+  - deploy
+
+#Sets up the docker
+smarthut_deploy:
+  stage: deploy
+  image: docker:latest
+  tags:
+    - dind
+  services:
+    - docker:dind
+  variables:
+    DOCKER_DRIVER: overlay
+  before_script:
+    - docker version
+    - docker info
+    - docker login -u smarthutsm -p $CI_DOCKER_PASS #GiovanniRoberto
+  script:
+    - "docker build -t smarthutsm/smarthut-backend:${CI_COMMIT_BRANCH} --pull ."
+    - "docker push smarthutsm/smarthut-backend:${CI_COMMIT_BRANCH}"
+  after_script:
+    - docker logout
+  only:
+    - dev
+    - master
+
+#base checks for the code
+build:
+  stage: build
+  script:
+    - gradle clean
+    - gradle assemble
+  artifacts:
+    paths:
+      - build/libs/*.jar
+    expire_in: 1 week
+
+#Runs the various tests and creates a report on the test coverage
+test:
+  stage: test
+  script:
+    - gradle test
+  artifacts:
+    paths:
+      - build/test-results/test/TEST-*.xml
+    reports:
+      junit: build/test-results/test/TEST-*.xml
+
+sonarqube:
+  image: gradle:jdk11
+  stage: code_quality
+  only:
+    - dev
+  script:
+    - gradle build jacocoTestReport sonarqube -Dsonar.verbose=true -Dsonar.host.url=$SONAR_URL -Dsonar.login=$SONAR_LOGIN -Dsonar.projectKey=$CI_PROJECT_PATH_SLUG -Dsonar.projectName=$CI_PROJECT_PATH_SLUG -Dsonar.scm.disabled=True -Dsonar.coverage.jacoco.xmlReportPaths=./build/reports/jacoco/test/jacocoTestReport.xml
